@@ -10,6 +10,8 @@
   "author": "vishnu",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.1"
+    "@hapi/joi": "^17.1.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.5.0"
   }
 }
