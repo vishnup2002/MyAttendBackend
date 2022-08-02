@@ -1,7 +1,11 @@
+const { application } = require("express");
 const express = require("express");
-const { register } = require("../../../../controllers/api/v1/user/register");
+const student = require("./student/auth");
+const teacher = require("./teacher/auth");
+
 const router = express.Router();
 
-router.post("/register", register);
+router.use("/student", student);
+router.use("/teacher", teacher);
 
 module.exports = router;
