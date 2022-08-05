@@ -17,6 +17,12 @@ const studentSchema = new mongoose.Schema(
       required: true,
       min: 6,
     },
+    classRooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Classroom",
+      },
+    ],
   },
   {
     timestamps: true,
