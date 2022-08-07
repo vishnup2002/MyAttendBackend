@@ -35,6 +35,7 @@ passport.use(
   "student",
   new JWTStrategy(opts, async function (jwt_payload, done) {
     try {
+      // console.log(jwt_payload);
       const user = await Student.findById(jwt_payload._id);
 
       if (user) {

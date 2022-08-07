@@ -6,6 +6,8 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const cors = require("cors");
+app.use(cors());
 
 //middleware to parse the POST requests
 app.use(express.json());

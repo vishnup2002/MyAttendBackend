@@ -23,6 +23,9 @@ const studentSchema = new mongoose.Schema(
         ref: "Classroom",
       },
     ],
+    currentChallenge: {
+      type: String,
+    },
   },
   {
     timestamps: true,
