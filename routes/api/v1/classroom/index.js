@@ -5,6 +5,8 @@ const {
   createJoiningLink,
   join,
   createSession,
+  markPresent,
+  markAttendance,
 } = require("../../../../controllers/api/v1/classroom/create");
 
 const router = express.Router();
@@ -21,12 +23,22 @@ router.post(
   createJoiningLink
 );
 
-router.get("/join", passport.authenticate("student", { session: false }), join);
+router.get(
+  "/join-classroom",
+  passport.authenticate("student", { session: false }),
+  join
+);
 
 router.post(
   "/create-session",
   passport.authenticate("teacher", { session: false }),
   createSession
+);
+
+router.get(
+  "/mark-attendance",
+  passport.authenticate("student", { session: false }),
+  markAttendance
 );
 
 module.exports = router;

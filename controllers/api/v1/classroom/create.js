@@ -50,7 +50,7 @@ module.exports.join = async (req, res) => {
     }
     classroom.Students.push(uid);
     let student = await Student.findById(uid);
-    student.classRooms.push(classID);
+    student.classRooms.push({ classID });
     await classroom.save();
     await student.save();
     return res.status(200).json({
@@ -66,6 +66,12 @@ module.exports.createSession = async (req, res) => {
 
   const tid = req.user._id;
   const classroom = await Classroom.findById(classID);
+
+  if (!classroom) {
+    return res.status(200).json({
+      message: "No such classroom exists!!",
+    });
+  }
 
   if (!classroom.teacher.equals(tid)) {
     return res.status(400).json({
@@ -85,13 +91,17 @@ module.exports.createSession = async (req, res) => {
   });
 };
 
-module.exports.joinSession = async (req, res) => {
-  const sid = req.query._id;
+module.exports.markAttendance = async (req, res) => {
+  const sid = req.query.id;
   const uid = req.user._id;
 
   const session = await Session.findById(sid);
 
-  const classroom = await Classroom.findById(session.classid);
+  if (!session) {
+    return res.status(400).json({ message: "No session exists" });
+  }
+
+  const classroom = await Classroom.findById(session.classID);
 
   if (!classroom.Students.includes(uid)) {
     return res.status(400).json({
@@ -99,18 +109,16 @@ module.exports.joinSession = async (req, res) => {
     });
   }
 
-  if (session.present.includes({ verified: true, student: uid })) {
+  if (session.present.includes(uid)) {
     return res.status(200).json({
       message: "You already marked attendance",
     });
   }
 
-  if (session.present.includes({ verified: false, student: uid })) {
-    return res
-      .status(200)
-      .json({ message: "Continue with facial recognition" });
-  }
+  //do web authentication
+  return res.redirect(ROOT + "user/student/generate-authentication-option");
 
-  session.present.push({ verified: false, student: uid });
-  return res.status(200).json({ message: "Continue with facial recognition" });
+  // console.log(resp);
+  // // session.present.push(uid);
+  // return res.status(200).json({ message: "Continue with facial recognition" });
 };

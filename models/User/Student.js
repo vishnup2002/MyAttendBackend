@@ -19,13 +19,19 @@ const studentSchema = new mongoose.Schema(
     },
     classRooms: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Classroom",
+        classID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Classroom",
+        },
+        joinedSessions: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Session",
+          },
+        ],
       },
     ],
-    currentChallenge: {
-      type: String,
-    },
+    currentChallenge: String,
   },
   {
     timestamps: true,

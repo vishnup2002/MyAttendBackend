@@ -8,21 +8,15 @@ const sessionSchema = new mongoose.Schema(
       required: true,
     },
 
-    classid: {
+    classID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Classroom",
     },
 
     present: [
       {
-        verified: {
-          type: Boolean,
-          default: false,
-        },
-        student: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Student",
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
       },
     ],
 

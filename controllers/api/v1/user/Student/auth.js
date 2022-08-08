@@ -9,6 +9,8 @@ const {
   verifyAuthenticationResponse,
 } = require("@simplewebauthn/server");
 const Authenticator = require("../../../../../models/Authenticator");
+const Session = require("../../../../../models/Session");
+const Classroom = require("../../../../../models/Classroom");
 
 const rpName = "MyAttend";
 const rpID = "localhost";
@@ -205,6 +207,7 @@ module.exports.verifyAuthWA = async (req, res) => {
   }
 
   const { verified } = verification;
+  let message;
 
   if (verified) {
     const { authenticationInfo } = verification;
@@ -212,9 +215,50 @@ module.exports.verifyAuthWA = async (req, res) => {
     authenticator.counter = newCounter;
 
     await authenticator.save();
+
+    const sid = req.query.id;
+    const uid = req.user._id;
+
+    const session = await Session.findById(sid);
+    if (!session) {
+      return res.status(400).json({ message: "No session exists" });
+    }
+
+    const classroom = await Classroom.findById(session.classID);
+
+    if (!classroom.Students.includes(uid)) {
+      return res.status(400).json({
+        message: "You do not belong to this class",
+      });
+    }
+
+    if (session.present.includes(uid)) {
+      return res.status(400).json({
+        message: "You already marked attendance",
+      });
+    }
+
+    session.present.push(uid);
+
+    const student = await Student.findById(uid);
+    const clsIndex = student.classRooms.findIndex(({ classID }) =>
+      classID.equals(session.classID)
+    );
+
+    student.classRooms[clsIndex].joinedSessions.push(sid);
+
+    await student.save();
+    await session.save();
+
+    console.log("marked-attendance");
+
+    message = "Marked attendance";
+  } else {
+    message = "Error in marking attendance";
   }
 
   return res.status(200).json({
     verified,
+    message,
   });
 };
