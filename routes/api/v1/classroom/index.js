@@ -5,7 +5,6 @@ const {
   createJoiningLink,
   join,
   createSession,
-  markPresent,
   markAttendance,
 } = require("../../../../controllers/api/v1/classroom/create");
 
