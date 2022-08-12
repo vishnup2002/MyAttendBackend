@@ -31,6 +31,11 @@ const studentSchema = new mongoose.Schema(
         ],
       },
     ],
+
+    registeredAuth: {
+      type: Boolean,
+      default: false,
+    },
     currentChallenge: String,
   },
   {

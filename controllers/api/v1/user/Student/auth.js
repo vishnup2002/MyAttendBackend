@@ -85,8 +85,13 @@ module.exports.createSession = async (req, res) => {
 };
 
 module.exports.registrationWA = async (req, res) => {
-  // console.log(req.user);
-  const user = await Student.findById(req.user._id);
+  const user = req.user;
+
+  if (user.registeredAuth) {
+    return res
+      .status(400)
+      .json({ message: "You have already set up 2 step authentication" });
+  }
   const userAuthenticators = await Authenticator.find({ uid: user._id });
 
   const options = generateRegistrationOptions({
@@ -116,7 +121,7 @@ module.exports.registrationWA = async (req, res) => {
 
 module.exports.verifyRegWA = async (req, res) => {
   const data = req.body;
-  const user = await Student.findById(req.user._id);
+  const user = req.user;
   const expectedChallenge = user.currentChallenge;
 
   // console.log(data);
@@ -139,7 +144,7 @@ module.exports.verifyRegWA = async (req, res) => {
   if (verified) {
     const { registrationInfo } = verification;
     const { credentialPublicKey, credentialID, counter } = registrationInfo;
-    console.log("*", credentialID);
+
     const newAuthenticator = new Authenticator({
       credentialID,
       credentialPublicKey,
@@ -147,6 +152,9 @@ module.exports.verifyRegWA = async (req, res) => {
       uid: user._id,
     });
 
+    user.registeredAuth = true;
+
+    await user.save();
     await newAuthenticator.save();
   }
 
@@ -154,7 +162,13 @@ module.exports.verifyRegWA = async (req, res) => {
 };
 
 module.exports.authenticationWA = async (req, res) => {
-  const user = await Student.findById(req.user._id);
+  const user = req.user;
+
+  if (!user.registeredAuth) {
+    return res
+      .status(400)
+      .json({ message: "You have not set up a two step authentication" });
+  }
 
   const userAuthenticators = await Authenticator.find({ uid: user._id });
 
@@ -179,11 +193,12 @@ module.exports.authenticationWA = async (req, res) => {
 
 module.exports.verifyAuthWA = async (req, res) => {
   const data = req.body;
-  const user = await Student.findById(req.user._id);
+  const user = req.user;
+
   const expectedChallenge = user.currentChallenge;
 
   const authenticator = await Authenticator.findOne({
-    id: data.id,
+    uid: user._id,
   });
 
   if (!authenticator) {
