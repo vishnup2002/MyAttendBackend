@@ -15,6 +15,7 @@ const Classroom = require("../../../../../models/Classroom");
 const rpName = "MyAttend";
 const rpID = "localhost";
 const origin = `http://${rpID}:3000`;
+// const io = require("../../../../../index");
 
 dotenv.config();
 
@@ -239,6 +240,10 @@ module.exports.verifyAuthWA = async (req, res) => {
       return res.status(400).json({ message: "No session exists" });
     }
 
+    if (!session.active) {
+      return res.status(400).json({ message: "Session not active" });
+    }
+
     const classroom = await Classroom.findById(session.classID);
 
     if (!classroom.Students.includes(uid)) {
@@ -275,5 +280,11 @@ module.exports.verifyAuthWA = async (req, res) => {
   return res.status(200).json({
     verified,
     message,
+  });
+};
+
+module.exports.checkAuthStatus = (req, res) => {
+  return res.status(200).json({
+    status: req.user.registeredAuth,
   });
 };

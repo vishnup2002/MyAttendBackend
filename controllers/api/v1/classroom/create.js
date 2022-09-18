@@ -2,6 +2,7 @@ const Classroom = require("../../../../models/Classroom");
 const Session = require("../../../../models/Session");
 const Student = require("../../../../models/User/Student");
 const { ROOT } = require("../../../../Utils/URLs");
+const io = require("../../../../index");
 
 module.exports.create = async (req, res) => {
   const { name } = req.body;
@@ -91,10 +92,29 @@ module.exports.createSession = async (req, res) => {
   });
 };
 
+module.exports.activateAttendance = async (req, res) => {
+  const sid = req.query.sessionid;
+  const session = await Session.findById(sid);
+  session.active = true;
+  await session.save();
+  return res.status(200).json({
+    message: "Activated",
+  });
+};
+
+module.exports.deactivateAttendance = async (req, res) => {
+  const sid = req.query.sessionid;
+  const session = await Session.findById(sid);
+  session.active = false;
+  await session.save();
+  return res.status(200).json({
+    message: "Deactivated",
+  });
+};
+
 module.exports.markAttendance = async (req, res) => {
   const sid = req.query.id;
   const uid = req.user._id;
-
   const session = await Session.findById(sid);
 
   if (!session) {
@@ -110,7 +130,7 @@ module.exports.markAttendance = async (req, res) => {
   }
 
   if (session.present.includes(uid)) {
-    return res.status(200).json({
+    return res.status(409).json({
       message: "You already marked attendance",
     });
   }

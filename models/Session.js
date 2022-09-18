@@ -20,9 +20,9 @@ const sessionSchema = new mongoose.Schema(
       },
     ],
 
-    valid: {
+    active: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   {

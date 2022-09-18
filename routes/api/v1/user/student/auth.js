@@ -7,6 +7,7 @@ const {
   verifyRegWA,
   authenticationWA,
   verifyAuthWA,
+  checkAuthStatus,
 } = require("../../../../../controllers/api/v1/user/Student/auth");
 const router = express.Router();
 
@@ -31,6 +32,12 @@ router.post(
   "/verify-authentication",
   passport.authenticate("student", { session: false }),
   verifyAuthWA
+);
+
+router.get(
+  "/get-auth-status",
+  passport.authenticate("student", { session: false }),
+  checkAuthStatus
 );
 
 module.exports = router;
