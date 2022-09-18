@@ -21,14 +21,12 @@ app.use("/", require("./routes"));
 const httpServer = createServer(app);
 io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
 
 io.on("connection", (socket) => {
-  console.log("connected");
-
   socket.on("join-room", (data) => {
     socket.join(data);
     const countPresent = async (sid) => {

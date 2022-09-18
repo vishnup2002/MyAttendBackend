@@ -36,13 +36,20 @@ module.exports.fetchpresentStudents = async (req, res) => {
 
   const session = await Session.findById(sessionid)
     .populate("present", "name")
-    .populate("classID");
+    .populate({
+      path: "classID",
+      populate: {
+        path: "Students",
+        select: { name: 1 },
+      },
+    });
 
   return res.status(200).json({
     data: {
       present: session.present,
       sessionStatus: session.active,
       classStrength: session.classID.Students.length,
+      students: session.classID.Students,
     },
   });
 };
