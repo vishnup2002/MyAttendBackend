@@ -2,7 +2,6 @@ const Classroom = require("../../../../models/Classroom");
 const Session = require("../../../../models/Session");
 const Student = require("../../../../models/User/Student");
 const { ROOT } = require("../../../../Utils/URLs");
-const io = require("../../../../index");
 
 module.exports.create = async (req, res) => {
   const { name } = req.body;
