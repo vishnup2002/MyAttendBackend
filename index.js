@@ -26,6 +26,11 @@ io = new Server(httpServer, {
   },
 });
 
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
+
 io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
     socket.join(data);
