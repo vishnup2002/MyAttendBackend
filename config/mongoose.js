@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-mongoose.connect("mongodb://localhost/myattend");
+dotenv.config();
+
+const dburl = process.env.DB_URL;
+
+mongoose.connect(dburl);
 
 const db = mongoose.connection;
 
