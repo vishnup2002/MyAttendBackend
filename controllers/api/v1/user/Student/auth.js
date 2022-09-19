@@ -13,8 +13,8 @@ const Session = require("../../../../../models/Session");
 const Classroom = require("../../../../../models/Classroom");
 
 const rpName = "MyAttend";
-const rpID = "localhost";
-const origin = `http://${rpID}:3000`;
+const rpID = "myattend-32f84.web.app";
+const origin = `https://myattend-32f84.web.app`;
 // const io = require("../../../../../index");
 
 dotenv.config();
