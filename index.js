@@ -10,6 +10,8 @@ const socketPort = process.env.SOCKET_PORT;
 const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const socket = require("socket.io");
+
 const { getPresentCount } = require("./controllers/api/v1/classroom/fetch");
 app.use(cors());
 
@@ -19,12 +21,14 @@ app.use(express.json());
 app.use("/", require("./routes"));
 
 const httpServer = createServer(app);
-io = new Server(httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
   },
 });
+
+// const io = socket.listen(httpServer);
 
 // io.configure(function () {
 //   io.set("transports", ["xhr-polling"]);
@@ -55,11 +59,11 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(socketPort, () => {
-  console.log(`socket server is running on port ${socketPort}`);
-});
+// httpServer.listen(port, () => {
+//   console.log(`socket server is running on port ${socketPort}`);
+// });
 
-app.listen(port, (err) => {
+httpServer.listen(port, (err) => {
   if (err) {
     console.log(err);
   }
