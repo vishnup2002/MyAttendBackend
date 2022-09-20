@@ -283,6 +283,10 @@ module.exports.verifyAuthWA = async (req, res) => {
   });
 };
 
+module.exports.checkAuthenticated = (req, res) => {
+  return res.status(200);
+};
+
 module.exports.checkAuthStatus = (req, res) => {
   return res.status(200).json({
     status: req.user.registeredAuth,
